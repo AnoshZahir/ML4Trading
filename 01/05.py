@@ -12,6 +12,8 @@ def symbol_to_path(symbol, base_dir = os.path.dirname(os.getcwd()) + '/data'):
 
 #---------Reads csv-----------------------------------------
 def get_data(symbollist, dates):
+    """Read stock data(adjusted close) for given symbols from csv files.
+        Return df_final with data for adj Close and dates as index."""     
     df_final = pd.DataFrame(index = dates)
     if 'SPY' not in symbollist:
         symbollist.insert(0, 'SPY')
@@ -26,26 +28,42 @@ def get_data(symbollist, dates):
             df_final = df_final.dropna(subset = ['SPY'])
     return df_final
 
+#---------Fill missing na values in df_final-------------------
+def fill_missing_values(df_data):
+    """Fill missing values in df, forward and then backward fill, in place."""
+    df_data.fillna(method = 'ffill', inplace = 'True')
+    df_data.fillna(method = 'bfill', inplace = 'True')
+    
 #---------------plot function----------------------------------
-def plot(df_data):
+def plot_data(df_data):
+    """Plot stock data with appropriate axis labels."""
     ax = df_data.plot(title = 'Incomplete Data', fontsize = 2)
     ax.set_xlabel('Date')
     ax.set_ylabel('Prices')
     plt.show()
     
-if __name__ == '__main__':
+#---------------test_run function------------------------------
+def test_run():
+    """Function called by Test Run."""    
+    
     #list of symbols
-    #symbollist = ['PSX', 'Fake1', 'FAKE2']
-    symbollist = ['FAKE2']
-    #date range
+    symbollist = ['PSX', 'Fake1', 'FAKE2'] 
+    
+    #create date range
     start_date = '2005-12-31'
     end_date = '2014-12-07'
-    #create date range
-    idx = pd.date_range(start_date, end_date)
+    idx = pd.date_range(start_date, end_date) 
+    
     #get adjusted close for each symbol
     df_data = get_data(symbollist, idx)
-    df_data.fillna(method = 'ffill', inplace = 'True')
-    df_data.fillna(method = 'bfill', inplace = 'True')
+    
+    #forward fill and then back fill na's
+    fill_missing_values(df_data)
 
-    plot(df_data)
+    #plot the data
+    plot_data(df_data)
+    
+#--------------run the code--------------------------------------
+if __name__ == '__main__':
+    test_run()
     
