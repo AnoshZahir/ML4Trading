@@ -5,7 +5,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from lesson6 import get_data, plot_data
+from util import get_data, plot_data
 
 #-----------Function to compute daily returns----------------
 def compute_daily_returns(df):

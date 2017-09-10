@@ -48,8 +48,6 @@ def test_run():
 if __name__ == "__main__":
     test_run()
 
-import pandas as pd
-
 def get_max_close(symbol):
     """Return the maximum closing value for stock indicated by symbol.
     Note: Data for a stock is stored in file: data/<symbol>.csv
