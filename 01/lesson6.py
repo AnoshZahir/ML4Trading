@@ -1,10 +1,5 @@
 """ 01-05 Missing data """
 
-import os
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
 from util import symbol_to_path, get_data, plot_data
 
 

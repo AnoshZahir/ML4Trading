@@ -1,9 +1,5 @@
 """01-04 Statistcal analysis of time series"""
 
-import os
-import pandas as pd
-import matplotlib.pyplot as plt
-
 from util import symbol_to_path, get_data, plot_data, plot_selected 
 from util import normalise_data
 

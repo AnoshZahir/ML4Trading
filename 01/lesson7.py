@@ -1,10 +1,5 @@
 """01-06 Histograms and scatter plots."""
 
-"""Plot a histogram"""
-
-import pandas as pd
-import matplotlib.pyplot as plt
-
 from util import get_data, plot_data
 
 #-----------Function to compute daily returns----------------
