@@ -12,24 +12,29 @@ def compute_daily_returns(df):
 
 #-----------test run------------------------------------------
 def test_run():
-    #Read data
+    #Read the data into a dataframe
     dates = pd.date_range('2009-01-01', '2012-12-31')
-    symbols = ['SPY']
+    symbols = ['SPY', 'XOM']
     df = get_data(symbols, dates)
+    
+    #Plot the dataframe data
     plot_data(df)
     
-    #Compute daily returns and plot the data
+    #Compute and plot daily returns
     daily_returns = compute_daily_returns(df)
     plot_data(daily_returns, title = 'Daily returns', ylabel = 'Daily returns')
+
+    #Plot both histograms on the same plot
+    daily_returns['SPY'].hist(bins = 20, label = 'SPY')
+    daily_returns['XOM'].hist(bins = 20, label = 'XOM')
+    plt.legend(loc = 'upper right')
     
-    #Plot a histogram
-    daily_returns.hist(bins = 20)
-    
-    #Get mean and std dev
+    #Get mean, std dev and kurtosis
     mean = daily_returns['SPY'].mean()
     print('mean = ' + str(mean))
     std_dev = daily_returns['SPY'].std()
     print('std_dev = ' + str(std_dev))
+    print('kurtosis = ' + str(daily_returns.kurtosis()))
     
     #show the mean value on the plot
     plt.axvline(mean, color = 'w', linestyle = 'dashed', linewidth = 2)
@@ -37,9 +42,8 @@ def test_run():
     #show the std dev on theplot
     plt.axvline(std_dev, color = 'r', linestyle = 'dashed', linewidth = 2)
     plt.axvline(-std_dev, color = 'r', linestyle = 'dashed', linewidth = 2)
-    
-    #Compute kurtosis
-    print('kurtosis = ' + str(daily_returns.kurtosis()))
+    #plt.show()
+
 
     
 #-----------run------------------------------------------------
