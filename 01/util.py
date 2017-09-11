@@ -2,6 +2,7 @@
  ML4Trading."""
 
 import os
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
  
@@ -32,6 +33,16 @@ def get_data(symbolList, dates):
 def normalise_data(df):
     """Normalise stock prices using the first row of the dataframe."""
     return df/df.ix[0,:]
+
+#-----------Function to compute daily returns----------------
+def compute_daily_returns(df):
+    """Compute and return daily return values."""
+    daily_returns = df.copy()
+    daily_returns[1:] = (df[1:] / df[:-1].values) - 1
+    #daily_returns.ix[0, :] = 0 # set daily returns for row 0 to 0
+    daily_returns.ix[0] = 0 #for lesson8 the above does not work.  Get error
+    # msg raise IndexingError(key), IndexingError: (0, slice(None, None, None))
+    return daily_returns
 
 #---------------plot function----------------------------------
 def plot_data(df_data ,title = 'Stock prices', fontsize = 2, xlabel = 'Dates', 

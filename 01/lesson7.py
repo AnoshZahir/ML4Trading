@@ -2,14 +2,6 @@
 
 from util import get_data, plot_data
 
-#-----------Function to compute daily returns----------------
-def compute_daily_returns(df):
-    """Compute and return daily return values."""
-    daily_returns = df.copy()
-    daily_returns[1:] = (df[1:] / df[:-1].values) - 1
-    daily_returns.ix[0, :] = 0 # set daily returns for row 0 to 0
-    return daily_returns
-
 #-----------test run------------------------------------------
 def test_run():
     #Read the data into a dataframe
