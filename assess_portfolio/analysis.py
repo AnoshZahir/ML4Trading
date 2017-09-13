@@ -69,7 +69,7 @@ def assess_portfolio(sd, ed, syms, allocs, sv, rfr, sf, gen_plot):
     sr = np.sqrt(sf)*(adr - rfr)/sddr
     #ev = portfolio_df[-1, :]
     
-    results = {'cr': cr, 'adr': adr, 'sddr': sddr, 'sr': sr, 'ev': 'test'}
+    results = {'sr': sr, 'sddr': sddr, 'adr': adr, 'cr': cr }
     
     if gen_plot == True:
         
@@ -81,10 +81,10 @@ def assess_portfolio(sd, ed, syms, allocs, sv, rfr, sf, gen_plot):
 
 
 def test_run():
-    sd = '2010-01-01'
+    sd = '2010-06-01'
     ed = '2010-12-31'
-    syms = ['AXP', 'HPQ', 'IBM', 'HNZ']
-    allocs = [0.0, 0.0, 0.0, 1.0]
+    syms = ['GOOG', 'AAPL', 'GLD', 'XOM']
+    allocs = [0.2, 0.3, 0.4, 0.1]
     
     print(assess_portfolio(sd, ed, syms, allocs, sv = 1, rfr = 0.0, sf = 252, gen_plot = True))
 
