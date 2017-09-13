@@ -1,0 +1,36 @@
+Overview:
+---------
+A portfolio is a collection of stocks (or other assets) and corresponding 
+allocations of funds to each of them. In order to evaluate and compare 
+different portfolios, we first need to compute certain metrics, based on 
+available historical data.
+
+The primary goal of this assignment is to introduce you to this form of 
+portfolio analysis. You will use pandas for reading in data, calculating 
+various statistics and plotting a comparison graph.
+
+Task:
+-----    
+Create a function called assess_portfolio() that takes as input a description 
+of a portfolio and computes important statistics about it. You are given the 
+following inputs for analyzing a portfolio:
+    
+    * A date range to select the historical data to use (specified by a start and 
+end date). You should consider performance from close of the start date to 
+close of the end date.
+
+    * Symbols for equities (e.g., GOOG, AAPL, GLD, XOM). Note: You should support 
+any symbol in the data directory.
+
+    * Allocations to the equities at the beginning of the simulation (e.g., 0.2, 0.3, 0.4, 0.1), should sum to 1.0.
+    
+    *Total starting value of the portfolio (e.g. $1,000,000)
+
+Your goal is to compute the daily portfolio value over given date range, and 
+then the following statistics for the overall portfolio:
+    * Cumulative return
+    * Average period return (if sampling frequency == 252 then this is average 
+    daily return)
+    * Standard deviation of daily returns
+    * Sharpe ratio of the overall portfolio, given daily risk free rate (usually 0), and yearly sampling frequency (usually 252, the no. of trading days in a year)
+    * Ending value of the portfolio
