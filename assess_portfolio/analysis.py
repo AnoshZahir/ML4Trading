@@ -83,12 +83,8 @@ def assess_portfolio(sd, ed, syms, allocs, sv, rfr, sf, gen_plot):
 def test_run():
     sd = '2010-01-01'
     ed = '2010-12-31'
-    syms = ['GOOG', 'AAPL', 'GLD', 'XOM']
-    allocs = [0.2, 0.3, 0.4, 0.1]
-    '''sr = 1.51819243641
-    sddr = 0.0100104028
-    adr = 0.000957366234238
-    cr = 0.255646784534'''
+    syms = ['AXP', 'HPQ', 'IBM', 'HNZ']
+    allocs = [0.0, 0.0, 0.0, 1.0]
     
     print(assess_portfolio(sd, ed, syms, allocs, sv = 1, rfr = 0.0, sf = 252, gen_plot = True))
 
