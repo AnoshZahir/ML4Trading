@@ -3,7 +3,6 @@
 import os
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
  
 #---------Get path of the symbol. Used by get_data function---------
 def symbol_to_path(symbol, base_dir = os.path.dirname(os.getcwd()) + '/data'):
@@ -42,12 +41,3 @@ def compute_daily_returns(df):
     daily_returns.ix[0] = 0 #for lesson8 the above does not work.  Get error
     # msg raise IndexingError(key), IndexingError: (0, slice(None, None, None))
     return daily_returns
-
-#---------------plot function----------------------------------
-def plot_data(df_data ,title = 'Stock prices', fontsize = 2, xlabel = 'Dates', 
-              ylabel = 'Prices'):
-    """Plot stock data with appropriate axis labels."""
-    ax = df_data.plot(title = title, fontsize = fontsize)
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-    plt.show()

@@ -1,8 +1,9 @@
 import numpy as np
 import pandas as pd
-from util import get_data, normalise_data, compute_daily_returns, plot_data
+import matplotlib.pyplot as plt
+from util import get_data, normalise_data, compute_daily_returns
 
-def assess_portfolio(sd, ed, syms, allocs, sv, rfr, sf, gen_plot):
+def assess_portfolio(sd, ed, syms, allocs, rfr = 0.0, sf = 252, gen_plot = True, sv = 1):
     """Function takes a number of paarameters and returns numerous statistics
     to assess a portfolio's performance.
     
@@ -28,7 +29,7 @@ def assess_portfolio(sd, ed, syms, allocs, sv, rfr, sf, gen_plot):
     ev: End value of portfolio
     """
     
-    dates = pd.date_range(sd, ed) 
+    dates = pd.date_range(sd, ed)
     
     #---------Build a portfolio dataframe---------------------------------
 
@@ -36,7 +37,7 @@ def assess_portfolio(sd, ed, syms, allocs, sv, rfr, sf, gen_plot):
     df = get_data(syms, dates)
     
     #Only SPY dataframe - used to add to plot later
-    SPY = df.loc[:, syms[0]:]
+    SPY = df.loc[:, syms[0]]
     
     #portfolio dataframe without SPY
     port = df.loc[:, syms[1]:]
@@ -67,26 +68,75 @@ def assess_portfolio(sd, ed, syms, allocs, sv, rfr, sf, gen_plot):
     adr = daily_returns.mean()
     sddr = daily_returns.std()
     sr = np.sqrt(sf)*(adr - rfr)/sddr
-    #ev = portfolio_df[-1, :]
-    
-    results = {'sr': sr, 'sddr': sddr, 'adr': adr, 'cr': cr }
     
     if gen_plot == True:
-        
-        plot_data(portfolio, title = 'Daily portfolio value and SPY', fontsize = 2, xlabel = 'Dates', 
-              ylabel = 'Normalised price')
-        
+         ax = portfolio.plot(title = 'Daily portfolio value and SPY', 
+                             fontsize = 2, label = 'Portfolio')
+         normed_SPY.plot(label = 'SPY')
+         ax.set_xlabel('Date')
+         ax.set_ylabel('Normalised price')
+         plt.legend(loc = 'upper left')
+         plt.show()
 
-    return results
-
+    return cr, adr, sddr, sr
 
 def test_run():
-    sd = '2010-06-01'
+#---Example1--------------------------------------------------------------
+    sd = '2010-01-01'
     ed = '2010-12-31'
-    syms = ['GOOG', 'AAPL', 'GLD', 'XOM']
+    syms = ['GOOG', 'AAPL', 'GLD', 'XOM'] 
     allocs = [0.2, 0.3, 0.4, 0.1]
     
-    print(assess_portfolio(sd, ed, syms, allocs, sv = 1, rfr = 0.0, sf = 252, gen_plot = True))
-
+    cr, adr, sddr, sr = assess_portfolio(sd = sd, ed = ed, syms = syms, allocs = allocs)
+    print('Example 1')
+    print('Sharpe ratio: ' + str(sr))
+    print('Volatility (sddr): ' + str(sddr))
+    print('Average Daily Return: ' + str(adr))
+    print('Cumulative Return: ' + str(cr))
+    
+    #Correct results to check against:
+    #Sharpe Ratio: 1.51819243641
+    #Volatility (stdev of daily returns): 0.0100104028
+    #Average Daily Return: 0.000957366234238
+    #Cumulative Return: 0.255646784534
+    
+#---Example2--------------------------------------------------------------
+    sd = '2010-01-01'
+    ed = '2010-12-31'
+    syms = ['AXP', 'HPQ', 'IBM', 'HNZ'] 
+    allocs = [0.0, 0.0, 0.0, 1.0]
+    
+    cr, adr, sddr, sr = assess_portfolio(sd = sd, ed = ed, syms = syms, allocs = allocs)
+    print('Example 2')
+    print('Sharpe ratio: ' + str(sr))
+    print('Volatility (sddr): ' + str(sddr))
+    print('Average Daily Return: ' + str(adr))
+    print('Cumulative Return: ' + str(cr))
+    
+    #Correct results to check against:
+    #Sharpe Ratio: 1.30798398744
+    #Volatility (stdev of daily returns): 0.00926153128768
+    #Average Daily Return: 0.000763106152672
+    #Cumulative Return: 0.198105963655
+    
+#---Example3--------------------------------------------------------------
+    sd = '2010-06-01'
+    ed = '2010-12-31'
+    syms = ['GOOG', 'AAPL', 'GLD', 'XOM'] 
+    allocs = [0.2, 0.3, 0.4, 0.1]
+    
+    cr, adr, sddr, sr = assess_portfolio(sd = sd, ed = ed, syms = syms, allocs = allocs)
+    print('Example 3')
+    print('Sharpe ratio: ' + str(sr))
+    print('Volatility (sddr): ' + str(sddr))
+    print('Average Daily Return: ' + str(adr))
+    print('Cumulative Return: ' + str(cr))  
+    
+    #Correct results to check against:
+    #Sharpe Ratio: 2.21259766672
+    #Volatility (stdev of daily returns): 0.00929734619707
+    #Average Daily Return: 0.00129586924366
+    #Cumulative Return: 0.205113938792
+        
 if __name__ == '__main__':
     test_run()

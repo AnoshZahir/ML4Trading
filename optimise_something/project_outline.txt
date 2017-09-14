@@ -1,0 +1,60 @@
+Overview:
+---------
+In this project you will use what you learned about optimizers to optimize 
+a portfolio. That means that you will find how much of a portfolio's funds 
+should be allocated to each stock so as to optimize it's performance. 
+We can optimize for many different metrics. In previous versions of this 
+assignment, we tried to maximize Sharpe Ratio. We're changing it this time 
+to define "optimal" as minimum volatility.
+
+You will leverage the functions you created in the last project that 
+assessed the value of a portfolio with a given set of allocations.
+
+Task:
+-----
+Implement a Python function named optimize_portfolio() in the file 
+optimization.py that can find the optimal allocations for a given set of 
+stocks. You should optimize for minimum volatility (i.e., standard deviation
+of daily return).
+
+The function should accept as input a list of symbols as well as start and 
+end dates and return a list of floats (as a one-dimensional numpy array) 
+that represents the allocations to each of the equities. You should take 
+advantage of routines developed in the portfolio analysis project to 
+compute daily portfolio value and statistics. You should cut-and-paste 
+your code for the functions that did this from the last project into 
+optimization.py.
+
+You are given the following inputs for optimizing a portfolio:
+
+A date range to select the historical data to use (specified by a start and
+end date).
+Symbols for equities (e.g., GOOG, AAPL, GLD, XOM). Note: You should support 
+any symbol in the data directory.
+
+Your goal is to find allocations to the symbols that optimize the criteria 
+given above. Assume 252 trading days in a year and a risk free return of 
+0.0 per day. You should implement the following API EXACTLY, 
+if you do not your submission will be penalized.
+
+import datetime as dt
+allocs, cr, adr, sddr, sr = \
+    optimize_portfolio(sd=dt.datetime(2008,1,1), ed=dt.datetime(2009,1,1), \
+    syms=['GOOG','AAPL','GLD','XOM'], gen_plot=False)
+
+Where the returned output is:
+
+allocs: A 1-d Numpy ndarray of allocations to the stocks. All the allocations 
+must be between 0.0 and 1.0 and they must sum to 1.0.
+cr: Cumulative return
+adr: Average daily return
+sddr: Standard deviation of daily return
+sr: Sharpe ratio
+
+The input parameters are:
+sd: A datetime object that represents the start date
+ed: A datetime object that represents the end date
+syms: A list of symbols that make up the portfolio
+gen_plot: If True, create a plot named plot.png
+"""
+
