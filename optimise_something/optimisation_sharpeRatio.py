@@ -67,6 +67,13 @@ def optimise_portfolio(sd, ed, syms, rfr = 0.0, sf = 252, gen_plot = True):
     
     #Get optimised portfolio's performance statistics
     cum_ret, ave_daily_ret, std_daily_ret, sharpe_ratio = get_portfolio_stats(optimised_port)
+    
+    #----------Plot the normalised portfolio and SPY prices--------
+    if gen_plot == True:
+        df_temp = pd.concat([optimised_port, normed_SPY], keys=['Portfolio', 'SPY'], axis=1)
+        plot_data(df_temp ,title = 'Daily portfolio value and SPY', 
+                  fontsize = 2, xlabel = 'Date', ylabel = 'Normalised price')
+
 
     return optimised_alloc, cum_ret, ave_daily_ret, std_daily_ret, sharpe_ratio
 def test_run():
