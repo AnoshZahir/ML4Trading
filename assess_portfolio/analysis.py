@@ -4,6 +4,22 @@ import matplotlib.pyplot as plt
 from util import get_data, normalise_data, compute_daily_returns, plot_data
 
 
+#--------Get data and make portfolio and SPY dataframes----------------------
+def get_port_SPY(start_date, end_date, syms):
+    """Function takes as input start date, end date and symbols (syms).
+    Returns a tuple (portfolio, SPY) of dataframes."""
+    #Start with the stock prices dataframe which also has SPY.
+    df = get_data(syms, pd.date_range(start_date, end_date))
+
+    #Only SPY dataframe - used to add to plot later
+    SPY = df.loc[:, syms[0]]
+    
+    #portfolio dataframe without SPY
+    port = df.loc[:, syms[1]:]
+    
+    return (port, SPY)
+
+
 #--------Get to portfolio value from stock prices----------------------
 def get_portfolio_value(data_df, allocs, start_val = 1):
     """ Function that takes a dataframe of stock prices and allocation
@@ -85,16 +101,17 @@ def assess_portfolio(sd, ed, syms, allocs, rfr = 0.0, sf = 252, gen_plot = True,
     """  
     #---------Build the portfolio---------------------------------
     #Start with the stock prices dataframe which also has SPY.
-    dates = pd.date_range(sd, ed)
-    df = get_data(syms, dates)
-    #Only SPY dataframe - used to add to plot later
-    SPY = df.loc[:, syms[0]]
-    normed_SPY = normalise_data(SPY)
+    joint_df = get_port_SPY(sd, ed, syms)
     #portfolio dataframe without SPY
-    port = df.loc[:, syms[1]:]
-    #Get the portfolio's value from the individual stocks in port.
+    port = joint_df[0]
+    #Only SPY dataframe - used to add to plot later
+    SPY = joint_df[1]
+    
+    #Normalise SPY
+    normed_SPY = normalise_data(SPY)
+    
+    #Add stock prices to get portfolio price. port_final is normalised.
     port_final = get_portfolio_value(port, allocs, start_val = sv)
-    #
     
     #----------Get portfolio's performance statistics--------
     cum_ret, ave_daily_ret, std_daily_ret, sharpe_ratio = get_portfolio_stats(port_final)
@@ -116,11 +133,10 @@ def test_run():
     
     cr, adr, sddr, sr = assess_portfolio(sd = sd, ed = ed, syms = syms, allocs = allocs)
     print('Example 1')
-    print('Sharpe ratio: ' + str(sr))
-    print('Volatility (sddr): ' + str(sddr))
-    print('Average Daily Return: ' + str(adr))
-    print('Cumulative Return: ' + str(cr))
-    #print('end val' + str(end_val))
+    print('Sharpe ratios match: ' + str(round(sr, 5) == round(1.51819243641, 5)))
+    print('Volatilities (sddr) match: ' + str(round(sddr, 5) == round(0.0100104028, 5)))
+    print('Average Daily Returns match: ' + str(round(adr, 5) == round(0.000957366234238, 5)))
+    print('Cumulative Returns match: ' + str(round(cr, 5) == round(0.255646784534, 5)))
     
     #Correct results to check against:
     #Sharpe Ratio: 1.51819243641
@@ -136,10 +152,10 @@ def test_run():
     
     cr, adr, sddr, sr = assess_portfolio(sd = sd, ed = ed, syms = syms, allocs = allocs)
     print('Example 2')
-    print('Sharpe ratio: ' + str(sr))
-    print('Volatility (sddr): ' + str(sddr))
-    print('Average Daily Return: ' + str(adr))
-    print('Cumulative Return: ' + str(cr))
+    print('Sharpe ratios match: ' + str(round(sr, 5) == round(1.30798398744, 5)))
+    print('Volatilities (sddr) match: ' + str(round(sddr, 5) == round(0.00926153128768, 5)))
+    print('Average Daily Returns match: ' + str(round(adr, 5) == round(0.000763106152672, 5)))
+    print('Cumulative Returns match: ' + str(round(cr, 5) == round(0.198105963655, 5)))
     
     #Correct results to check against:
     #Sharpe Ratio: 1.30798398744
@@ -155,10 +171,10 @@ def test_run():
     
     cr, adr, sddr, sr = assess_portfolio(sd = sd, ed = ed, syms = syms, allocs = allocs)
     print('Example 3')
-    print('Sharpe ratio: ' + str(sr))
-    print('Volatility (sddr): ' + str(sddr))
-    print('Average Daily Return: ' + str(adr))
-    print('Cumulative Return: ' + str(cr))  
+    print('Sharpe ratios match: ' + str(round(sr, 5) == round(2.21259766672, 5)))
+    print('Volatilities (sddr) match: ' + str(round(sddr, 5) == round(0.00929734619707, 5)))
+    print('Average Daily Returns match: ' + str(round(adr, 5) == round(0.00129586924366, 5)))
+    print('Cumulative Returns match: ' + str(round(cr, 5) == round( 0.205113938792, 5))) 
     
     #Correct results to check against:
     #Sharpe Ratio: 2.21259766672
