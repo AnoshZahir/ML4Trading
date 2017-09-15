@@ -1,8 +1,63 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from util import get_data, normalise_data, compute_daily_returns
+from util import get_data, normalise_data, compute_daily_returns, plot_data
 
+
+#--------Get to portfolio value from stock prices----------------------
+def get_portfolio_value(data_df, allocs, start_val = 1):
+    """ Function that takes a dataframe of stock prices and allocation
+    for each stock and returns a dataframe of portfolio value for each date.
+    """
+    #Normalise the stock prices
+    normed_port = normalise_data(data_df)
+    
+    #Reflect price changes based on each stock's portfolio allocation.
+    allocated_port = normed_port*allocs
+    
+    #How much each stock(col) in the portfolio is worth on each day(row).
+    port_posn_values = allocated_port*start_val
+    
+    #Sum across all stocks(cols)to show portfolio's value for each day(row).
+    portfolio = port_posn_values.sum(axis = 1)
+    
+    return portfolio
+    
+#---------Get a portfolio's performance stats------------------------
+def get_portfolio_stats(portfolio, rfr = 0.0, sf = 252):
+    """Take a portfolio dataframe  as input and return its cumulative 
+    return, average daily return, standard deviation and sharpe ratio.
+    
+    Parameters:
+    ----------
+    portfolio: dataframe containing prices of the portfolio.
+    rfr: float - risk free rate
+    sf: int - sampling frequency per year, needed to calculate shapre ratio.
+    
+    Return cumulative return, average daily return, standard deviation and sharpe ratio
+    """
+    #Cumulative return
+    cum_ret = (portfolio[-1]/portfolio[0]) - 1
+    
+    #Daily returns and delete row 1 = zero because it affects calculations.
+    daily_returns = compute_daily_returns(portfolio)
+    daily_returns = daily_returns[1:]
+    
+    #Average daily return
+    ave_daily_ret = daily_returns.mean()
+    
+    #Std dev of daily returns
+    std_daily_ret = daily_returns.std()
+    
+    #Sharp ratio of portfolio
+    sharpe_ratio = np.sqrt(sf)*((daily_returns - rfr).mean())/std_daily_ret
+    
+    #end value of portfolio
+    #end_val = portfolio[-1]
+    
+    return cum_ret, ave_daily_ret, std_daily_ret, sharpe_ratio
+
+#----------...----------------------------------------
 def assess_portfolio(sd, ed, syms, allocs, rfr = 0.0, sf = 252, gen_plot = True, sv = 1):
     """Function takes a number of paarameters and returns numerous statistics
     to assess a portfolio's performance.
@@ -22,63 +77,35 @@ def assess_portfolio(sd, ed, syms, allocs, rfr = 0.0, sf = 252, gen_plot = True,
     
     Return a dictionary with:
     -------
-    cr: float - cumulative return
-    adr: int - Average period return (if sf == 252 this is daily return)
-    sddr: float - Standard deviation of daily returns
-    sr: float - Sharpe ratio
-    ev: End value of portfolio
-    """
-    
-    dates = pd.date_range(sd, ed)
-    
-    #---------Build a portfolio dataframe---------------------------------
-
+    cum_ret: float - cumulative return
+    ave_daily_ret: int - Average period return (if sf == 252 this is daily return)
+    std_daily_ret: float - Standard deviation of daily returns
+    sharpe_ratio: float - Sharpe ratio
+    #ev: End value of portfolio
+    """  
+    #---------Build the portfolio---------------------------------
     #Start with the stock prices dataframe which also has SPY.
+    dates = pd.date_range(sd, ed)
     df = get_data(syms, dates)
-    
     #Only SPY dataframe - used to add to plot later
     SPY = df.loc[:, syms[0]]
-    
+    normed_SPY = normalise_data(SPY)
     #portfolio dataframe without SPY
     port = df.loc[:, syms[1]:]
+    #Get the portfolio's value from the individual stocks in port.
+    port_final = get_portfolio_value(port, allocs, start_val = sv)
+    #
     
-    #Normalise the prices
-    normed_port = normalise_data(port)
-    normed_SPY = normalise_data(SPY)
+    #----------Get portfolio's performance statistics--------
+    cum_ret, ave_daily_ret, std_daily_ret, sharpe_ratio = get_portfolio_stats(port_final)
     
-    #Reflect price changes based on each stock's portfolio allocation.
-    allocated_port = normed_port*allocs
-    
-    #How much each stock(col) in the portfolio is worth on each day(row).
-    port_posn_values = allocated_port*sv
-    
-    #Sum across all stocks(cols)to show portfolio's value for each day(row).
-    portfolio = port_posn_values.sum(axis = 1)
-    
-    #----------Calculate the portfolio's daily returns
-    
-    #Calculate the daily returns of the portfolio
-    daily_returns = compute_daily_returns(portfolio)
-    
-    #Delete the first row which is zero
-    daily_returns = daily_returns[1:]
-    
-    #Calculate statistics
-    cr = (portfolio[-1]/portfolio[0]) - 1
-    adr = daily_returns.mean()
-    sddr = daily_returns.std()
-    sr = np.sqrt(sf)*(adr - rfr)/sddr
-    
+    #----------Plot the normalised portfolio and SPY prices--------
     if gen_plot == True:
-         ax = portfolio.plot(title = 'Daily portfolio value and SPY', 
-                             fontsize = 2, label = 'Portfolio')
-         normed_SPY.plot(label = 'SPY')
-         ax.set_xlabel('Date')
-         ax.set_ylabel('Normalised price')
-         plt.legend(loc = 'upper left')
-         plt.show()
+        df_temp = pd.concat([port_final, normed_SPY], keys=['Portfolio', 'SPY'], axis=1)
+        plot_data(df_temp ,title = 'Daily portfolio value and SPY', 
+                  fontsize = 2, xlabel = 'Dates', ylabel = 'Normalised price')
 
-    return cr, adr, sddr, sr
+    return cum_ret, ave_daily_ret, std_daily_ret, sharpe_ratio
 
 def test_run():
 #---Example1--------------------------------------------------------------
@@ -93,6 +120,7 @@ def test_run():
     print('Volatility (sddr): ' + str(sddr))
     print('Average Daily Return: ' + str(adr))
     print('Cumulative Return: ' + str(cr))
+    #print('end val' + str(end_val))
     
     #Correct results to check against:
     #Sharpe Ratio: 1.51819243641

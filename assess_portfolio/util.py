@@ -1,10 +1,12 @@
-"""assess_portfolio util file"""
+"""Util file that contains all the utility functions used in part 01 of
+ ML4Trading."""
 
 import os
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
  
-#---------Get path of the symbol. Used by get_data function---------
+#---------function to get path of the symbol---------------
 def symbol_to_path(symbol, base_dir = os.path.dirname(os.getcwd()) + '/data'):
     """Return CSV file path given ticker symbol."""
     return os.path.join(base_dir, "{}.csv".format(str(symbol)))
@@ -41,3 +43,19 @@ def compute_daily_returns(df):
     daily_returns.ix[0] = 0 #for lesson8 the above does not work.  Get error
     # msg raise IndexingError(key), IndexingError: (0, slice(None, None, None))
     return daily_returns
+
+#---------------plot function----------------------------------
+def plot_data(df_data ,title = 'Stock prices', fontsize = 2, xlabel = 'Dates', 
+              ylabel = 'Prices'):
+    """Plot stock data with appropriate axis labels."""
+    ax = df_data.plot(title = title, fontsize = fontsize)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    plt.show()
+    
+#---------Plot function with custom columms and indices.-------------
+def plot_selected(df, columns, start_index, end_index):
+    """Plot the desired columns over index values in the given range
+    """
+    df_temp = df.ix[start_index:end_index, columns]
+    return plot_data(df_temp, title = 'Selected data')
