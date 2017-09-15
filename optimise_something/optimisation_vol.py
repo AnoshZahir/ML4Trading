@@ -1,3 +1,6 @@
+"""ml4t Autumn 2017: optimise_portfolio function to minimise volatility of 
+portfolio."""
+   
 """ml4t spring 2017: optimise_portfolio function to optimise the sharp 
 ratio of a portfolio.
 """
@@ -26,12 +29,12 @@ def find_optimised_alloc(portfolio, func):
     
     return result.x
 
-def error_alloc_sr(allocs, portfolio, start_val = 1):
+def error_alloc_vol(allocs, portfolio, start_val = 1):
     """Function that takes allocations and portfolio and returns the
     portfolio's sharpe ratio*(-1).  Used with find_optimsed_alloc."""   
     port_final = get_portfolio_value(portfolio, allocs, start_val)
     cum_ret, ave_daily_ret, std_daily_ret, sharpe_ratio = get_portfolio_stats(port_final)
-    return sharpe_ratio*(-1)
+    return cum_ret
       
 def optimise_portfolio(sd, ed, syms, rfr = 0.0, sf = 252, gen_plot = True):
     """Find the optimal allocation for a given set of stocks, optimised for 
@@ -60,7 +63,7 @@ def optimise_portfolio(sd, ed, syms, rfr = 0.0, sf = 252, gen_plot = True):
     normed_SPY = normalise_data(SPY) #Normalise SPY
     
     #Find the optimal allocations
-    optimised_alloc = find_optimised_alloc(port, error_alloc_sr)
+    optimised_alloc = find_optimised_alloc(port, error_alloc_vol)
     
     #portfolio based on optimised allocations
     optimised_port = get_portfolio_value(port, optimised_alloc)
@@ -76,6 +79,7 @@ def optimise_portfolio(sd, ed, syms, rfr = 0.0, sf = 252, gen_plot = True):
 
 
     return optimised_alloc, cum_ret, ave_daily_ret, std_daily_ret, sharpe_ratio
+
 def test_run():
 #---Example 1--------------------------------------------------------------
     sd = '2010-01-01'
@@ -84,61 +88,14 @@ def test_run():
     opt_alloc, cr, adr, sddr, sr = optimise_portfolio(sd, ed, syms, rfr = 0.0, sf = 252, gen_plot = True)
     print('Example 1')
     print('Optimal allocations: ' + str(opt_alloc))
-    print('Sharpe ratios match: ' + str(round(sr, 5) == round(2.00401501102, 5)))
+    #print('Sharpe ratios match: ' + str(round(sr, 5) == round(???, 5)))
     print('Sharpe ratio: ' + str(sr))
-    print('Volatilities (sddr) match: ' + str(round(sddr, 5) == round(0.0101163831312, 5)))
+    #print('Volatilities (sddr) match: ' + str(round(sddr, 5) == round(???, 5)))
     print('Volatility (sddr): ' + str(sddr))
-    print('Average Daily Returns match: ' + str(round(adr, 5) == round(0.00127710312803, 5)))
+    #print('Average Daily Returns match: ' + str(round(adr, 5) == round(???, 5)))
     print('Average Daily Return: ' + str(adr))
-    print('Cumulative Returns match: ' + str(round(cr, 5) == round(0.360090826885, 5)))
+    #print('Cumulative Returns match: ' + str(round(cr, 5) == round(???, 5)))
     print('Cumulative Return: ' + str(cr))
 
-#---Example 2--------------------------------------------------------------
-    sd = '2004-01-01'
-    ed = '2006-01-01'
-    syms = ['AXP', 'HPQ', 'IBM', 'HNZ'] 
-    opt_alloc, cr, adr, sddr, sr = optimise_portfolio(sd, ed, syms, rfr = 0.0, sf = 252, gen_plot = True)
-    print('Example 2')
-    print('Optimal allocations: ' + str(opt_alloc))
-    print('Sharpe ratios match: ' + str(round(sr, 5) == round(0.842697383626, 5)))
-    print('Sharpe ratio: ' + str(sr))
-    print('Volatilities (sddr) match: ' + str(round(sddr, 5) == round(0.0093236393828, 5)))
-    print('Volatility (sddr): ' + str(sddr))
-    print('Average Daily Returns match: ' + str(round(adr, 5) == round(0.000494944887734, 5)))
-    print('Average Daily Return: ' + str(adr))
-    print('Cumulative Returns match: ' + str(round(cr, 5) == round(0.255021425162, 5)))
-    print('Cumulative Return: ' + str(cr))
-
-#---Example 3--------------------------------------------------------------
-    sd = '2004-12-01'
-    ed = '2006-05-31'
-    syms = ['YHOO', 'XOM', 'GLD', 'HNZ'] 
-    opt_alloc, cr, adr, sddr, sr = optimise_portfolio(sd, ed, syms, rfr = 0.0, sf = 252, gen_plot = True)
-    print('Example 3')
-    print('Optimal allocations: ' + str(opt_alloc))
-    print('Sharpe ratios match: ' + str(round(sr, 5) == round(1.5178365773, 5)))
-    print('Sharpe ratio: ' + str(sr))
-    print('Volatilities (sddr) match: ' + str(round(sddr, 5) == round(0.00797126844855, 5)))
-    print('Volatility (sddr): ' + str(sddr))
-    print('Average Daily Returns match: ' + str(round(adr, 5) == round(0.000762170576913, 5)))
-    print('Average Daily Return: ' + str(adr))
-    print('Cumulative Returns match: ' + str(round(cr, 5) == round(0.315973959221, 5)))
-    print('Cumulative Return: ' + str(cr))
-
-#---Example 4--------------------------------------------------------------
-    sd = '2005-12-01'
-    ed = '2006-05-31'
-    syms = ['YHOO', 'HPQ', 'GLD', 'HNZ'] 
-    opt_alloc, cr, adr, sddr, sr = optimise_portfolio(sd, ed, syms, rfr = 0.0, sf = 252, gen_plot = True)
-    print('Example 4')
-    print('Optimal allocations: ' + str(opt_alloc))
-    print('Sharpe ratios match: ' + str(round(sr, 5) == round(3.2334265871, 5)))
-    print('Sharpe ratio: ' + str(sr))
-    print('Volatilities (sddr) match: ' + str(round(sddr, 5) == round(0.00842416845541, 5)))
-    print('Volatility (sddr): ' + str(sddr))
-    print('Average Daily Returns match: ' + str(round(adr, 5) == round(0.00171589132005, 5)))
-    print('Average Daily Return: ' + str(adr))
-    print('Cumulative Returns match: ' + str(round(cr, 5) == round(0.229471589743, 5)))
-    print('Cumulative Return: ' + str(cr))
 if __name__ == '__main__':
     test_run()
